@@ -1,4 +1,11 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'dart:ui' as ui;
+
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -59,6 +66,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  GlobalKey repaintWidgetKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -67,47 +76,81 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+    return RepaintBoundary(
+      key: repaintWidgetKey,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
         ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'You have pushed the button this many times:',
+              ),
+              Text(
+                '$_counter',
+                style: Theme.of(context).textTheme.headline4,
+              ),
+              Icon(Icons.bathtub_sharp),
+              InkWell(
+                child: Text("Capture Screen and ready to share"),
+                onTap: () {
+                  _shareUiImage();
+                },
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _incrementCounter,
+          tooltip: 'Increment',
+          child: Icon(Icons.add),
+        ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  /// 截屏图片生成图片流ByteData
+  Future<ByteData> _capturePngToByteData() async {
+    try {
+      RenderRepaintBoundary boundary = repaintWidgetKey.currentContext
+          .findRenderObject();
+      if (boundary.debugNeedsPaint) {
+        print("Waiting for boundary to be painted.");
+        await Future.delayed(const Duration(milliseconds: 20));
+        return _capturePngToByteData();
+      }
+      double dpr = ui.window.devicePixelRatio; // 获取当前设备的像素比
+      ui.Image image = await boundary.toImage(pixelRatio: dpr);
+      ByteData _byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      return _byteData;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// 把图片ByteData写入File，并触发微信分享
+  Future<Null> _shareUiImage() async {
+
+    ByteData sourceByteData = await _capturePngToByteData();
+    if (sourceByteData == null) {
+      print("v got null");
+      return;
+    }
+    Uint8List sourceBytes = sourceByteData.buffer.asUint8List();
+    Directory tempDir = await getTemporaryDirectory();
+
+    String storagePath = tempDir.path;
+    File file = new File('$storagePath/报告截图.png');
+
+    if (!file.existsSync()) {
+      file.createSync();
+    }
+    file.writeAsBytesSync(sourceBytes);
+
+    print("保存图片成功");
   }
 }
