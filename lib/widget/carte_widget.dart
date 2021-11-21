@@ -12,12 +12,13 @@ class CarteWidget extends StatefulWidget {
 class _CarteWidgetState extends State<CarteWidget> {
 
   double _width = ui.window.physicalSize.width;
+  double _height = ui.window.physicalSize.height;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: _width,
-      height: 667,
+      height: _height,
       color: Colors.white,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -72,13 +73,13 @@ class _CarteWidgetState extends State<CarteWidget> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
-          margin: EdgeInsets.only(left: 12, top: 30, right: 12),
+          margin: EdgeInsets.only(left: 12, top: 20, right: 12),
           child: Image(image: AssetImage('images/test.jpeg'), width: 86, height: 261, fit: BoxFit.fill,),
         ),
         Expanded(
           flex: 1,
           child: Container(
-            height: 354,
+            height: 288,
             child: GridView.builder(
                 itemCount: 4,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

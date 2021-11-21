@@ -21,7 +21,7 @@ class _CaseWidgetState extends State<CaseWidget> {
   Widget build(BuildContext context) {
     return Container(
       width: _width,
-      height: 667,
+      height: _height,
       child: Stack(
         children: [
           _getBackgroundImage(),
@@ -76,12 +76,12 @@ class _CaseWidgetState extends State<CaseWidget> {
       children: [
         Container(
           margin: EdgeInsets.only(left: 30, top: 28, right: 30),
-          height: 500,
+          height: 450,
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10.0)),
         ),
         Container(
           margin: EdgeInsets.only(left: 46, top: 44, right: 46),
-          height: 370,
+          height: 320,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
             image: DecorationImage(
@@ -100,7 +100,7 @@ class _CaseWidgetState extends State<CaseWidget> {
 
   Widget _getInfo() {
     return Container(
-      margin: EdgeInsets.only(left: 46, top: 400, right: 46),
+      margin: EdgeInsets.only(left: 46, top: 350, right: 46),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
