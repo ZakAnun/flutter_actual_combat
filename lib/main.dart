@@ -10,12 +10,34 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() {
+
+  test();
+
   runApp(MyApp());
+}
+
+Future shouldNotLastMoreThan5sec() {
+  print("开始时间 = ${new DateTime.now().millisecondsSinceEpoch}");
+  Future foo = Future.delayed(const Duration(seconds: 10));
+  return foo.timeout(Duration(seconds: 5), onTimeout: (){
+    //cancel future ??
+    throw ('Timeout');
+  });
+}
+
+Future test() async {
+  try{
+    await shouldNotLastMoreThan5sec(); //this shoud not last more than 5 seconds
+  }catch (e){
+    print ('the error is ${e.toString()}');
+    print("异常捕获时间 = ${new DateTime.now().millisecondsSinceEpoch}");
+  }
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print("开始 build widget");
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
