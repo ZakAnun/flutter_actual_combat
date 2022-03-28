@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_actual_combat/page/nested_scroll_page.dart';
 import 'package:flutter_actual_combat/widget/carte_widget.dart';
 import 'dart:ui' as ui;
 
@@ -11,7 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 void main() {
 
-  test();
+  // test();
 
   runApp(MyApp());
 }
@@ -43,7 +44,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      // home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: NestedScrollPage(),
     );
   }
 }
