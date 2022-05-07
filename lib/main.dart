@@ -3,12 +3,13 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_actual_combat/page/nested_scroll_page.dart';
+import 'package:flutter_actual_combat/page/sign_test_page.dart';
 import 'package:flutter_actual_combat/widget/carte_widget.dart';
 import 'dart:ui' as ui;
 
 import 'package:flutter_actual_combat/widget/case_widget.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:image_gallery_saver/image_gallery_saver.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 void main() {
 
@@ -45,7 +46,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // home: MyHomePage(title: 'Flutter Demo Home Page'),
-      home: NestedScrollPage(),
+      // home: NestedScrollPage(),
+      home: SignTestPage(),
     );
   }
 }
@@ -122,18 +124,18 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _capturePoster() async {
     try {
       /// 权限检测
-      PermissionStatus storageStatus = await Permission.storage.status;
-      if (storageStatus != PermissionStatus.granted) {
-        storageStatus = await Permission.storage.request();
-        if (storageStatus != PermissionStatus.granted) {
-          print('无法存储图片，请先授权！');
-          Map<Permission, PermissionStatus> status = await [
-            Permission.storage
-          ].request();
-          print(status[Permission.storage]);
-          return;
-        }
-      }
+      // PermissionStatus storageStatus = await Permission.storage.status;
+      // if (storageStatus != PermissionStatus.granted) {
+      //   storageStatus = await Permission.storage.request();
+      //   if (storageStatus != PermissionStatus.granted) {
+      //     print('无法存储图片，请先授权！');
+      //     Map<Permission, PermissionStatus> status = await [
+      //       Permission.storage
+      //     ].request();
+      //     print(status[Permission.storage]);
+      //     return;
+      //   }
+      // }
 
       final RenderRepaintBoundary boundary = posterKey.currentContext.findRenderObject();
       if (boundary.debugNeedsPaint) {
@@ -146,13 +148,13 @@ class _MyHomePageState extends State<MyHomePage> {
       final ByteData _byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       Uint8List imageBytes = _byteData.buffer.asUint8List(_byteData.offsetInBytes, _byteData.lengthInBytes);
 
-      final result = await ImageGallerySaver.saveImage(imageBytes);
+      // final result = await ImageGallerySaver.saveImage(imageBytes);
 
-      if (result == null || result == '') {
-        print('图片保存失败');
-      }
-
-      print('result = $result, 图片保存成功');
+      // if (result == null || result == '') {
+      //   print('图片保存失败');
+      // }
+      //
+      // print('result = $result, 图片保存成功');
     } catch (e) {
       print(e);
     }
