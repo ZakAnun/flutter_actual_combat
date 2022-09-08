@@ -2,9 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_actual_combat/page/nested_scroll_page.dart';
-import 'package:flutter_actual_combat/page/sign_test_page.dart';
-import 'package:flutter_actual_combat/widget/carte_widget.dart';
+import 'package:flutter_actual_combat/page/test_page.dart';
+import 'package:flutter_actual_combat/widget/test_widget.dart';
 import 'dart:ui' as ui;
 
 import 'package:flutter_actual_combat/widget/case_widget.dart';
@@ -47,7 +46,8 @@ class MyApp extends StatelessWidget {
       ),
       // home: MyHomePage(title: 'Flutter Demo Home Page'),
       // home: NestedScrollPage(),
-      home: SignTestPage(),
+      // home: SignTestPage(),
+      home: DragGridItemPage(),
     );
   }
 }
