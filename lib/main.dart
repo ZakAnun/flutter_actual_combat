@@ -35,10 +35,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // home: MyHomePage(title: 'Flutter Demo Home Page'),
-      // home: NestedScrollPage(),
-      // home: SignTestPage(),
-      home: DragGridItemPage(),
+      home: Scaffold (
+        appBar: AppBar(title: const Text('测试实现效果...')),
+        // body: MyHomePage(title: 'Flutter Demo Home Page'),
+        // body: NestedScrollPage(),
+        // body: SignTestPage(),
+        body: DragGridItemPage(),
+      ),
     );
   }
 }
