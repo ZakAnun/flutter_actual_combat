@@ -8,7 +8,7 @@ class DraggableListWidget<T> extends StatefulWidget {
 
   final List<T> dataList;
 
-  DraggableListWidget(this.dataList, {Key key}) : super(key: key);
+  DraggableListWidget(this.dataList, {Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -18,12 +18,12 @@ class DraggableListWidget<T> extends StatefulWidget {
 
 class _DraggableListWidgetState<T> extends State<DraggableListWidget> {
 
-  List<T> _items;
+  List<T>? _items;
 
   @override
   void initState() {
     super.initState();
-    _items = widget.dataList;
+    _items = widget.dataList.cast<T>();
   }
 
   @override
@@ -32,15 +32,16 @@ class _DraggableListWidgetState<T> extends State<DraggableListWidget> {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final Color oddItemColor = colorScheme.primary.withOpacity(0.05);
     final Color evenItemColor = colorScheme.primary.withOpacity(0.15);
+    int len = _items?.length ?? 0;
 
     return ReorderableListView(
       padding: const EdgeInsets.symmetric(horizontal: 40),
       children: <Widget>[
-        for (int index = 0; index < _items.length; index += 1)
+        for (int index = 0; index < len; index += 1)
           ListTile(
             key: Key('$index'),
             tileColor: index.isOdd ? oddItemColor : evenItemColor,
-            title: Text('Item ${_items[index]}'),
+            title: Text('Item ${_items?[index]}'),
           ),
       ],
       onReorder: (int oldIndex, int newIndex) {
@@ -48,8 +49,8 @@ class _DraggableListWidgetState<T> extends State<DraggableListWidget> {
           if (oldIndex < newIndex) {
             newIndex -= 1;
           }
-          final T item = _items.removeAt(oldIndex);
-          _items.insert(newIndex, item);
+          final T item = _items?.removeAt(oldIndex) as T;
+          _items?.insert(newIndex, item);
         });
       },
     );

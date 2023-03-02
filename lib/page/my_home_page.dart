@@ -6,9 +6,9 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_actual_combat/widget/test_widget.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, this.title}) : super(key: key);
 
-  final String title;
+  final String? title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -90,17 +90,18 @@ class _MyHomePageState extends State<MyHomePage> {
       //   }
       // }
 
-      final RenderRepaintBoundary boundary = posterKey.currentContext.findRenderObject();
-      if (boundary.debugNeedsPaint) {
+      final RenderRepaintBoundary? boundary = posterKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      if (boundary?.debugNeedsPaint == true) {
         print('Waiting for boundary to be painted.');
         await Future<void>.delayed(const Duration(milliseconds: 20));
         return _capturePoster();
       }
       final double dpr = ui.window.devicePixelRatio; // 获取当前设备的像素比
-      final ui.Image image = await boundary.toImage(pixelRatio: dpr);
-      final ByteData _byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      Uint8List imageBytes = _byteData.buffer.asUint8List(_byteData.offsetInBytes, _byteData.lengthInBytes);
+      final ui.Image? image = await boundary?.toImage(pixelRatio: dpr);
+      final ByteData? _byteData = await image?.toByteData(format: ui.ImageByteFormat.png);
+      Uint8List? imageBytes = _byteData?.buffer.asUint8List(_byteData.offsetInBytes, _byteData.lengthInBytes);
 
+      print('imageBytes == $imageBytes');
       // final result = await ImageGallerySaver.saveImage(imageBytes);
 
       // if (result == null || result == '') {

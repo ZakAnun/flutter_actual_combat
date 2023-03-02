@@ -17,23 +17,21 @@ class DraggableGridWidget<T> extends StatefulWidget {
 
   DraggableGridWidget(
       this.dataList, {
-        Key key,
+        Key? key,
         this.scrollDirection = Axis.vertical,
         this.crossAxisCount = 3,
         this.childAspectRatio = 1.0,
-        @required this.itemBuilder,
-        @required this.canAccept,
-      })  : assert(itemBuilder != null),
-        assert(canAccept != null),
-        assert(dataList != null && dataList.length >= 0),
+        required this.itemBuilder,
+        required this.canAccept,
+      })  : assert(dataList.length >= 0),
         super(key: key);
   @override
   State<StatefulWidget> createState() => _DraggableGridWidgetState<T>();
 }
 
 class _DraggableGridWidgetState<T> extends State<DraggableGridWidget> {
-  List<T> _dataList; //数据源
-  List<T> _dataListBackup; //数据源备份，在拖动时 会直接在数据源上修改 来影响UI变化，当拖动取消等情况，需要通过备份还原
+  List<T>? _dataList; //数据源
+  List<T>? _dataListBackup; //数据源备份，在拖动时 会直接在数据源上修改 来影响UI变化，当拖动取消等情况，需要通过备份还原
   bool _showItemWhenCovered = false; //手指覆盖的地方，即item被拖动时 底部的那个widget是否可见；
   int _willAcceptIndex = -1; //当拖动覆盖到某个item上的时候，记录这个item的坐标
 //  int _draggingItemIndex = -1; //当前被拖动的item坐标
@@ -42,8 +40,8 @@ class _DraggableGridWidgetState<T> extends State<DraggableGridWidget> {
   @override
   void initState() {
     super.initState();
-    _dataList = widget.dataList;
-    _dataListBackup = _dataList.sublist(0);
+    _dataList = widget.dataList.cast<T>();
+    _dataListBackup = _dataList?.sublist(0);
 //    _scrollController = ScrollController();
   }
 
@@ -69,10 +67,11 @@ class _DraggableGridWidgetState<T> extends State<DraggableGridWidget> {
   List<Widget> _buildGridChildren(BuildContext context) {
     // final List list = List<Widget>();
     final List list = <Widget>[];
-    for (int x = 0; x < _dataList.length; x++) {
+    int len = _dataList?.length ?? 0;
+    for (int x = 0; x < len; x++) {
       list.add(_buildDraggable(context, x));
     }
-    return list;
+    return list as List<Widget>;
   }
 
   //绘制一个可拖拽的控件。
@@ -88,8 +87,8 @@ class _DraggableGridWidgetState<T> extends State<DraggableGridWidget> {
             //绘制widget
             builder: (context, data, rejects) {
               return _willAcceptIndex >= 0 && _willAcceptIndex == index
-                  ? null
-                  : widget.itemBuilder(context, _dataList[index]);
+                  ? SizedBox()
+                  : widget.itemBuilder(context, _dataList?[index]);
             },
             //手指拖着一个widget从另一个widget头上滑走时会调用
             onLeave: (data) {
@@ -98,21 +97,24 @@ class _DraggableGridWidgetState<T> extends State<DraggableGridWidget> {
               _willAcceptIndex = -1;
               setState(() {
                 _showItemWhenCovered = false;
-                _dataList = _dataListBackup.sublist(0);
+                _dataList = _dataListBackup?.sublist(0);
               });
             },
             //接下来松手 是否需要将数据给这个widget？  因为需要在拖动时改变UI，所以在这里直接修改数据源
-            onWillAccept: (int fromIndex) {
+            onWillAccept: (int? fromIndex) {
               print('$index will accept item $fromIndex');
+              if (fromIndex == null) {
+                return false;
+              }
               final accept = fromIndex != index;
               if (accept) {
                 _willAcceptIndex = index;
                 _showItemWhenCovered = true;
-                _dataList = _dataListBackup.sublist(0);
-                final fromData = _dataList[fromIndex];
+                _dataList = _dataListBackup?.sublist(0);
+                final fromData = _dataList?[fromIndex];
                 setState(() {
-                  _dataList.removeAt(fromIndex);
-                  _dataList.insert(index, fromData);
+                  _dataList?.removeAt(fromIndex);
+                  _dataList?.insert(index, fromData!);
                 });
               }
               return accept;
@@ -121,7 +123,7 @@ class _DraggableGridWidgetState<T> extends State<DraggableGridWidget> {
           onDragStarted: () {
             //开始拖动，备份数据源
 //            _draggingItemIndex = index;
-            _dataListBackup = _dataList.sublist(0);
+            _dataListBackup = _dataList?.sublist(0);
             print('item $index ---------------------------onDragStarted');
           },
           onDraggableCanceled: (Velocity velocity, Offset offset) {
@@ -132,7 +134,7 @@ class _DraggableGridWidgetState<T> extends State<DraggableGridWidget> {
             setState(() {
               _willAcceptIndex = -1;
               _showItemWhenCovered = false;
-              _dataList = _dataListBackup.sublist(0);
+              _dataList = _dataListBackup?.sublist(0);
             });
           },
           onDragCompleted: () {
@@ -147,13 +149,13 @@ class _DraggableGridWidgetState<T> extends State<DraggableGridWidget> {
           feedback: SizedBox(
             width: constraint.maxWidth,
             height: constraint.maxHeight,
-            child: widget.itemBuilder(context, _dataList[index]),
+            child: widget.itemBuilder(context, _dataList?[index]),
           ),
           //这个是当item被拖动时，item原来位置用来占位的widget，（用户把item拖走后原来的地方该显示啥？就是这个）
           childWhenDragging: Container(
             child: SizedBox(
               child: _showItemWhenCovered
-                  ? widget.itemBuilder(context, _dataList[index])
+                  ? widget.itemBuilder(context, _dataList?[index])
                   : null,
             ),
           ),

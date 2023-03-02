@@ -21,7 +21,7 @@ class SignTestPage extends StatefulWidget {
 class _SignTestPageState extends State<SignTestPage> {
 
   /// 标记签名画板的Key，用于截图
-  GlobalKey _globalKey;
+  GlobalKey? _globalKey;
 
   /// 已描绘的点
   List<Offset> _points = <Offset>[];
@@ -57,7 +57,7 @@ class _SignTestPageState extends State<SignTestPage> {
                       children: <Widget> [
                         GestureDetector(
                           onPanUpdate: (details) => _addPoints(details),
-                          onPanEnd: (details) => _points.add(null),
+                          // onPanEnd: (details) => _points.add(null),
                         ),
                         CustomPaint(painter: BoardPainter(_points),)
                       ],
@@ -68,7 +68,7 @@ class _SignTestPageState extends State<SignTestPage> {
                   top: 50,
                   child: Container(
                     margin: const EdgeInsets.only(left: 12),
-                    child: Text(_imageLocalPath ?? '',
+                    child: Text(_imageLocalPath,
                       style: TextStyle(fontSize: 8, color: Colors.white,),),
                   )
                 ),
@@ -79,7 +79,7 @@ class _SignTestPageState extends State<SignTestPage> {
                     child: Container(
                       height: 180,
                       child: Image.file(
-                        File(_imageLocalPath ?? '')
+                        File(_imageLocalPath)
                       ),
                     ),
                   )
@@ -97,9 +97,9 @@ class _SignTestPageState extends State<SignTestPage> {
                   ),
                   onTap: () {
                     setState(() {
-                      _points?.clear();
+                      _points.clear();
                       _points = [];
-                      _imageLocalPath = null;
+                      _imageLocalPath = '';
                     });
                   },
                 )),
@@ -141,10 +141,13 @@ class _SignTestPageState extends State<SignTestPage> {
 
   /// 绘制线条
   void _addPoints(DragUpdateDetails details) {
-    RenderBox referenceBox = _globalKey.currentContext.findRenderObject();
-    Offset localPosition = referenceBox.globalToLocal(details.globalPosition);
-    double maxW = referenceBox.size.width;
-    double maxH = referenceBox.size.height;
+    RenderRepaintBoundary? referenceBox = _globalKey?.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+    Offset? localPosition = referenceBox?.globalToLocal(details.globalPosition);
+    double maxW = referenceBox?.size.width ?? 0;
+    double maxH = referenceBox?.size.height ?? 0;
+    if (localPosition == null) {
+      return;
+    }
     // 校验范围
     if (localPosition.dx <= 0 || localPosition.dy <= 0) {
       return;
@@ -172,11 +175,16 @@ class _SignTestPageState extends State<SignTestPage> {
 
   /// 截图
   Future<String> _capturePng(File file) async {
-    RenderRepaintBoundary boundary = _globalKey.currentContext.findRenderObject();
+    RenderRepaintBoundary? boundary = _globalKey?.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+    if (boundary == null) {
+      return '';
+    }
     ui.Image image = await boundary.toImage();
-    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    Uint8List pngBytes = byteData.buffer.asUint8List();
-    file.writeAsBytes(pngBytes);
+    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    Uint8List? pngBytes = byteData?.buffer.asUint8List();
+    if (pngBytes != null) {
+      file.writeAsBytes(pngBytes);
+    }
     return file.path;
   }
 }
@@ -192,9 +200,7 @@ class BoardPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 5.0;
     for (int i = 0; i < points.length - 1; i++) {
-      if (points[i] != null && points[i + 1] != null) {
-        canvas.drawLine(points[i], points[i + 1], paint);
-      }
+      canvas.drawLine(points[i], points[i + 1], paint);
     }
   }
 
