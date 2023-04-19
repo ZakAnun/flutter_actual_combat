@@ -11,8 +11,14 @@ class FixedColumnTable extends StatelessWidget {
       scrollDirection: Axis.vertical,
       child: Row(
         children: [
-          FixedColumn(
-            data: data,
+          // may be update in a scroll action
+          Material(
+            elevation: AppBarTheme.of(context).scrolledUnderElevation ?? 6,
+            shadowColor: AppBarTheme.of(context).shadowColor,
+            shape: AppBarTheme.of(context).shape,
+            child: FixedColumn(
+              data: data,
+            ),
           ),
           Expanded(
             child: SingleChildScrollView(
