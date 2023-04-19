@@ -20,6 +20,7 @@ class FixedColumnTable extends StatelessWidget {
               child: DataTable(
                 columns: _buildColumns(),
                 rows: _buildRows(),
+                dividerThickness: 0,
               ),
             ),
           ),
@@ -84,6 +85,7 @@ class FixedColumn extends StatelessWidget {
           )
         ],
         rows: _buildCells(),
+        dividerThickness: 0,
       ),
     );
   }
