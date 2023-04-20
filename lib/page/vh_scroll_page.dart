@@ -7,6 +7,12 @@ class FixedColumnTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // return usingSingleScroll(context);
+    return usingCustomScroll(context);
+  }
+
+  /// 外层包裹 SingleChildScrollView
+  Widget usingSingleScroll(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Row(
@@ -23,6 +29,7 @@ class FixedColumnTable extends StatelessWidget {
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
+              physics: BouncingScrollPhysics(),
               child: DataTable(
                 columns: _buildColumns(),
                 rows: _buildRows(),
@@ -32,6 +39,40 @@ class FixedColumnTable extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  /// 外层包裹 CustomScrollView
+  Widget usingCustomScroll(BuildContext context) {
+    return CustomScrollView(
+      slivers: <Widget> [
+        SliverToBoxAdapter(
+          child: Row(
+            children: [
+              // may be update in a scroll action
+              Material(
+                elevation: AppBarTheme.of(context).scrolledUnderElevation ?? 6,
+                shadowColor: AppBarTheme.of(context).shadowColor,
+                shape: AppBarTheme.of(context).shape,
+                child: FixedColumn(
+                  data: data,
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: BouncingScrollPhysics(),
+                  child: DataTable(
+                    columns: _buildColumns(),
+                    rows: _buildRows(),
+                    dividerThickness: 0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
     );
   }
 
@@ -196,5 +237,69 @@ class FixedColumn extends StatelessWidget {
 //         ),
 //       ),
 //     );
+//   }
+// }
+
+// class FixedColumnDataTable extends StatelessWidget {
+//   final List<DataRow> rows;
+//   final List<DataColumn> columns;
+//
+//   const FixedColumnDataTable({
+//     Key? key,
+//     required this.rows,
+//     required this.columns,
+//   }) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return SingleChildScrollView(
+//       scrollDirection: Axis.horizontal,
+//       child: Column(
+//         children: [
+//           SingleChildScrollView(
+//             scrollDirection: Axis.vertical,
+//             child: SizedBox(
+//               width: _calculateTableWidth(),
+//               child: DataTable(
+//                 columns: _buildFixedColumns(),
+//                 rows: rows,
+//               ),
+//             ),
+//           ),
+//           SizedBox(
+//             height: _calculateTableRowHeight(),
+//             child: ListView.builder(
+//               scrollDirection: Axis.horizontal,
+//               itemCount: rows.length,
+//               itemBuilder: (context, index) {
+//                 return SizedBox(
+//                   height: _calculateTableRowHeight(),
+//                   child: DataTable(
+//                     columns: _buildScrollableColumns(),
+//                     rows: [rows[index]],
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   List<DataColumn> _buildFixedColumns() {
+//     return [columns.first];
+//   }
+//
+//   List<DataColumn> _buildScrollableColumns() {
+//     return List<DataColumn>.from(columns)..removeAt(0);
+//   }
+//
+//   double _calculateTableWidth() {
+//     return columns.fold<double>(0, (acc, column) => acc + column.width!);
+//   }
+//
+//   double _calculateTableRowHeight() {
+//     return kMinInteractiveDimension;
 //   }
 // }
