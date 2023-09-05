@@ -4,3 +4,4 @@ export './drag_grid_item_page.dart';
 export './my_home_page.dart';
 export './vh_scroll_page.dart';
 export './h_sync_scroll_page.dart';
+export './test_overlay_page.dart';
