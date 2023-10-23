@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_actual_combat/page/test_page.dart';
+import 'package:flutter_actual_combat/widget/test_widget.dart';
 import 'package:share_extend/share_extend.dart';
 
 void main() {
@@ -124,6 +125,7 @@ class MyApp extends StatelessWidget {
         // ),
         // body: SyncHorizontalScroll(),
         body: TestOverlayEntity(),
+        // body: ToggleButtonWidget(),
       ),
     );
   }
