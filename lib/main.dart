@@ -126,7 +126,8 @@ class MyApp extends StatelessWidget {
         // body: SyncHorizontalScroll(),
         // body: TestOverlayEntity(),
         // body: ToggleButtonWidget(),
-        body: TwoHalfCircleWidget(),
+        // body: TwoHalfCircleWidget(),
+        body: TestDtColumnPage(),
       ),
     );
   }
